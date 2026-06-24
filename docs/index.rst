@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Light Curve Figure Package documentation
+Light Curve Figure Package Documentation
 ========================================
 
 Add your content using ``reStructuredText`` syntax. See the
@@ -15,12 +15,8 @@ documentation for details.
    :maxdepth: 2
    :caption: Contents:
 
-lcfp.rst
+   lcfp.rst
 
 
 Indicies and tables
 ==============================
-
-*:ref:'genindex'
-*:ref:'modindex'
-*:ref:'search'

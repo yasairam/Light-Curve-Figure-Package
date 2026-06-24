@@ -3,7 +3,7 @@
 LCFP Functions
 =====================
 
-Function to generate the publishable light curve
+Functions to call and generate publishable light curves.
 
 .. automodule:: light_curve_constructor
    :members:
