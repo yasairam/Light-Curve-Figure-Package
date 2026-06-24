@@ -15,3 +15,12 @@ documentation for details.
    :maxdepth: 2
    :caption: Contents:
 
+lcfp.rst
+
+
+Indicies and tables
+==============================
+
+*:ref:'genindex'
+*:ref:'modindex'
+*:ref:'search'
