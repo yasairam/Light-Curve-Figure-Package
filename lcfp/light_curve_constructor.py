@@ -3,7 +3,6 @@ from astropy.time import Time
 import astropy.units as u
 import matplotlib.pyplot as plt
 import os
-import os
 
 def conversion(data, flux_units):
     """Convert the two-column table input data into a five-column table. 
@@ -54,7 +53,7 @@ def conversion(data, flux_units):
 
     return light_curve_dataset    
     
-def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x, log_sel_y, file_type_sel):
+def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x, log_sel_y, file_type_sel, itv):
     """Create a light curve from astronomical input.
 
     Based on the input from the user in the CLI, this function will generate a publishable light curve.
@@ -81,6 +80,8 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
         
         file_type_sel (str): Python string. User selected value being either: png, pdf, or jpeg no as the output
             for the light curve to be saved.
+        
+        itv (str): Python string. User selected value being either: no or yes for if they wish to have an interactive view or not.
 
     Returns:
         None: light curve figure saved to computer as either a png, pdf, or jpeg.
@@ -104,13 +105,14 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
     # Time selection
     if time_sel == "yyyy_mm_dd":
         x = time_yyyy_mm_dd
-        ax.set_xlabel("Date [YYYY-MM-DD]")
+        ax.set_xlabel("Date [YYYY-MM-DD]", fontsize=16, weight='bold')
+        ax.tick_params(axis="x", labelrotation=75)
     elif time_sel == "MJD":
         x = time_MJD
-        ax.set_xlabel("MJD")
+        ax.set_xlabel("MJD", fontsize=16, weight='bold')
     elif time_sel == "JD":
         x = time_JD
-        ax.set_xlabel("JD")
+        ax.set_xlabel("JD", fontsize=16, weight='bold')
 
     # Set log_scale for x-axis:
     if log_sel_x == "yes" and (time_sel == "MJD" or time_sel == "JD"):
@@ -121,13 +123,13 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
         if log_sel_y == "yes":
             y = brightness_flux_density
             ax.set_yscale("log")
-            ax.set_ylabel(f"Brightness [{flux_units}]")
+            ax.set_ylabel(f"Brightness [{flux_units}]", fontsize=16, weight='bold')
         else:
             y = brightness_flux_density
-            ax.set_ylabel(f"Brightness [{flux_units}]")
+            ax.set_ylabel(f"Brightness [{flux_units}]", fontsize=16, weight='bold')
     elif brightness_sel == "ab_mag":
         y = brightness_ab_magnitude
-        ax.set_ylabel("Brightness [AB Magnitude]")
+        ax.set_ylabel("Brightness [AB Magnitude]", fontsize=16, weight='bold')
         ax.invert_yaxis() # Only invert y-axis if AB magnitude is chosen
     
     # Plot light curve:
@@ -136,7 +138,7 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
     # Making light curve look nice
     ax.tick_params(axis='both',
                    which='major',
-                   labelsize=16,
+                   labelsize=12,
                    width=2,
                    length=8,
                    direction='in',
@@ -157,14 +159,17 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
         spine.set_linewidth(2)
 
     plt.rcParams["font.family"] = "serif"
+
     plt.tight_layout()
     
     # Create output directory if it doesn't exist
     os.makedirs("output", exist_ok=True)
     
     plt.savefig(
-        f"output/light_curve.{file_type_sel}",
+        f"output/light_curve_time={time_sel}_brightness={brightness_sel}.{file_type_sel}",
         dpi=300,
         bbox_inches="tight"
     )
-    plt.show()
+
+    if itv == "yes":
+        plt.show()
