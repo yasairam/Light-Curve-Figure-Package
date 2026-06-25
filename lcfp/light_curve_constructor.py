@@ -2,6 +2,8 @@ import pandas as pd
 from astropy.time import Time
 import astropy.units as u
 import matplotlib.pyplot as plt
+import os
+import os
 
 def conversion(data, flux_units):
     """Convert the two-column table input data into a five-column table. 
@@ -129,7 +131,7 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
         ax.invert_yaxis() # Only invert y-axis if AB magnitude is chosen
     
     # Plot light curve:
-    ax.scatter(x, y, color='black', s=10)
+    ax.scatter(x, y, color='black', s=20)
 
     # Making light curve look nice
     ax.tick_params(axis='both',
@@ -156,6 +158,10 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
 
     plt.rcParams["font.family"] = "serif"
     plt.tight_layout()
+    
+    # Create output directory if it doesn't exist
+    os.makedirs("output", exist_ok=True)
+    
     plt.savefig(
         f"output/light_curve.{file_type_sel}",
         dpi=300,
