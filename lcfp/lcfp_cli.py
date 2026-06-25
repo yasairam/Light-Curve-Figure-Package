@@ -23,9 +23,9 @@ def parse_args():
                         help="x-axis choice: Modified Julian Date [MJD], Julian Date [JD], seconds [sec], days [day], months [mon], or years [yr]")
     parser.add_argument('-yaxis', 
                         type=str,
-                        choices=['mag', 'Jy', 'muJy', 'nJy'],
+                        choices=['mag', 'Jy', 'uJy', 'nJy'],
                         default='mag',
-                        help="y-axis choice: magnitudes (AB) [mag], Janskys [Jy], microJanskys [muJy], or nanoJanskys [nJy]")
+                        help="y-axis choice: magnitudes (AB) [mag], Janskys [Jy], microJanskys [uJy], or nanoJanskys [nJy]")
     parser.add_argument('-scale', 
                         type=str,
                         choices=['lin', 'log', 'xlog', 'ylog'],
@@ -67,10 +67,10 @@ def get_xaxis_units(xunit):
     
 def get_yaxis_units(yunit):
     yaxis_labels = {
-        'mag' : 'Brightness [mag (AB)]',
-        'Jy'  : 'Brightness [Jy]',
-        'muJy': r'Brightness [$\mu$Jy]',
-        'nJy' : 'Brightness [nJy]',
+        'mag': 'Brightness [mag (AB)]',
+        'Jy' : 'Brightness [Jy]',
+        'uJy': r'Brightness [$\mu$Jy]',
+        'nJy': 'Brightness [nJy]',
     }
     return {
         'column'    : yunit,
