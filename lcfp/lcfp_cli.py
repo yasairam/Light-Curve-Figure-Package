@@ -9,8 +9,7 @@ import argparse
 # ========================================================================================
 
 def parse_args():
-    parser = argparse.ArgumentParser()
-    
+    parser = argparse.ArgumentParser()    
     parser.add_argument('-type',  
                         type=str,
                         choices=['pdf', 'png', 'jpg', 'itv'],
@@ -37,7 +36,31 @@ def parse_args():
     parser.add_argument('-xmin', type=float, help="Min x value")
     parser.add_argument('-xmax', type=float, help="Max x value")
     parser.add_argument('-ymin', type=float, help="Min y value")
-    parser.add_argument('-ymax', type=float, help="Max y value")
-    
+    parser.add_argument('-ymax', type=float, help="Max y value")    
     return parser.parse_args()
 
+def get_output_format(output_type):
+    format_settings = {
+        'itv': {'txtsize': 36, 'mrksize': 12},
+        'pdf': {'txtsize': 14, 'mrksize': 8},
+        'png': {'txtsize': 14, 'mrksize': 8},
+        'jpg': {'txtsize': 14, 'mrksize': 8},
+    }
+    settings = format_settings[output_type]
+    return output_type, settings['txtsize'], settings['mrksize']
+
+def apply_axis_scale(ax, scale):
+    scale_map = {
+        'lin':  ('linear', 'linear'),
+        'log':  ('log', 'log'),
+        'xlog': ('log', 'linear'),
+        'ylog': ('linear', 'log'),
+    }
+    xscale, yscale = scale_map[scale]
+    ax.set_xscale(xscale)
+    ax.set_yscale(yscale)
+
+def get_limits(data_min, data_max, user_min=None, user_max=None):
+    lower = data_min if user_min is None else user_min
+    upper = data_max if user_max is None else user_max
+    return lower, upper
