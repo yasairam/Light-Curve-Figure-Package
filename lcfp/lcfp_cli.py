@@ -36,7 +36,7 @@ def parse_args():
     parser.add_argument('-scale', 
                         type=str,
                         choices=['lin', 'log', 'xlog', 'ylog'],
-                        default='log',
+                        default='lin',
                         help="Axis scaling: linear [lin], logarithmic [log], x-axis logarithmic [xlog], or y-axis logarithmic [ylog]")
     parser.add_argument('-date', 
                         action='store_true',
