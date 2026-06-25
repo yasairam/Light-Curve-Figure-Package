@@ -9,13 +9,6 @@ import argparse
 # ========================================================================================
 
 def parse_args():
-    """
-    Parse command-line arguments from the user.
-    
-    Returns:
-        Parsed command-line arguments.
-    """
-    
     parser = argparse.ArgumentParser()
     
     parser.add_argument('-type',  
