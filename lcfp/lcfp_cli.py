@@ -18,7 +18,7 @@ def parse_args():
                         help="Output format: pdf, png, jpg, or interactive plot [itv]")
     parser.add_argument('-xaxis', 
                         type=str,
-                        choices=['MJD', 'JD', 'sec', 'day', 'month', 'year'],
+                        choices=['MJD', 'JD', 'sec', 'day', 'mon', 'yr'],
                         default='MJD',
                         help="x-axis choice: Modified Julian Date [MJD], Julian Date [JD], seconds [sec], days [day], months [mon], or years [yr]")
     parser.add_argument('-yaxis', 
