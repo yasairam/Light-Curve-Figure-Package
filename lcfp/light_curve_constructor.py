@@ -81,7 +81,7 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
             for the light curve to be saved.
 
     Returns:
-        None: light curve figure saved to computer.
+        None: light curve figure saved to computer as either a png, pdf, or jpeg.
     """
 
     # Get the converted dataset from the user data
