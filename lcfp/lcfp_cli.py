@@ -17,14 +17,14 @@ def parse_args():
                         help="Output format: pdf, png, jpg, or interactive plot [itv]")
     parser.add_argument('-xaxis', 
                         type=str,
-                        choices=['mag', 'flux', 'Jy', 'muJy', 'nJy'],
-                        default='mag',
-                        help="x-axis choice: magnitudes (AB) [mag], flux density [flux], Janskys [Jy], microJanskys [muJy], or nanoJanskys [nJy]")
-    parser.add_argument('-yaxis', 
-                        type=str,
                         choices=['MJD', 'JD', 'sec', 'day', 'month', 'year'],
                         default='MJD',
-                        help="y-axis choice: Modified Julian Date [MJD], Julian Date [JD], seconds [sec], days [day], months [month], or years [year]")
+                        help="x-axis choice: Modified Julian Date [MJD], Julian Date [JD], seconds [sec], days [day], months [mon], or years [yr]")
+    parser.add_argument('-yaxis', 
+                        type=str,
+                        choices=['mag', 'Jy', 'muJy', 'nJy'],
+                        default='mag',
+                        help="y-axis choice: magnitudes (AB) [mag], Janskys [Jy], microJanskys [muJy], or nanoJanskys [nJy]")
     parser.add_argument('-scale', 
                         type=str,
                         choices=['lin', 'log', 'xlog', 'ylog'],
@@ -49,10 +49,38 @@ def get_output_format(output_type):
     settings = format_settings[output_type]
     return output_type, settings['txtsize'], settings['mrksize']
 
+def get_xaxis_units(xunit):
+    xaxis_labels = {
+        'MJD': 'Time [MJD]',
+        'JD' : 'Time [JD]',
+        'sec': 'Time [s]',
+        'day': 'Time [days]',
+        'mon': 'Time [months]',
+        'yr' : 'Time [yr]',
+    }
+    return {
+        'column'    : xunit,
+        'xlabel'    : xaxis_labels[xunit],
+        'file_label': xunit,
+    }
+    
+def get_yaxis_units(yunit):
+    yaxis_labels = {
+        'mag' : 'Brightness [mag (AB)]',
+        'Jy'  : 'Brightness [Jy]',
+        'muJy': r'Brightness [$\mu$Jy]',
+        'nJy' : 'Brightness [nJy]',
+    }
+    return {
+        'column'    : yunit,
+        'xlabel'    : yaxis_labels[yunit],
+        'file_label': yunit,
+    }
+
 def apply_axis_scale(ax, scale):
     scale_map = {
-        'lin':  ('linear', 'linear'),
-        'log':  ('log', 'log'),
+        'lin' : ('linear', 'linear'),
+        'log' : ('log', 'log'),
         'xlog': ('log', 'linear'),
         'ylog': ('linear', 'log'),
     }
