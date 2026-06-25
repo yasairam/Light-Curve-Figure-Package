@@ -25,9 +25,14 @@ def parse_args():
                         help="x-axis choice: Modified Julian Date [MJD], Julian Date [JD], seconds [sec], days [day], months [mon], or years [yr]")
     parser.add_argument('-yaxis', 
                         type=str,
-                        choices=['mag', 'Jy', 'uJy', 'nJy'],
+                        choices=['mag', 'flux'],
                         default='mag',
-                        help="y-axis choice: magnitudes (AB) [mag], Janskys [Jy], microJanskys [uJy], or nanoJanskys [nJy]")
+                        help="y-axis choice: AB magnitudes [mag] or flux density [flux]")
+    parser.add_argument('-flux_units',
+                        type=str,
+                        choices=['Jy', 'uJy', 'nJy'],
+                        default='Jy',
+                        help="Flux density units: Janskys [Jy], microJanskys [uJy], or nanoJanskys [nJy]")
     parser.add_argument('-scale', 
                         type=str,
                         choices=['lin', 'log', 'xlog', 'ylog'],
@@ -44,41 +49,39 @@ def parse_args():
 
 def get_output_format(output_type):
     format_settings = {
-        'itv': {'txtsize': 36, 'mrksize': 12},
-        'pdf': {'txtsize': 14, 'mrksize': 8},
-        'png': {'txtsize': 14, 'mrksize': 8},
-        'jpg': {'txtsize': 14, 'mrksize': 8},
+        'itv': {'filetype': None,  'interactive': True,  'txtsize': 36, 'mrksize': 12},
+        'pdf': {'filetype': 'pdf', 'interactive': False, 'txtsize': 14, 'mrksize': 8},
+        'png': {'filetype': 'png', 'interactive': False, 'txtsize': 14, 'mrksize': 8},
+        'jpg': {'filetype': 'jpg', 'interactive': False, 'txtsize': 14, 'mrksize': 8},
     }
-    settings = format_settings[output_type]
-    return output_type, settings['txtsize'], settings['mrksize']
+    return format_settings[output_type]
 
 def get_xaxis_units(xunit):
-    xaxis_labels = {
-        'MJD': 'Time [MJD]',
-        'JD' : 'Time [JD]',
-        'sec': 'Time [s]',
-        'day': 'Time [days]',
-        'mon': 'Time [months]',
-        'yr' : 'Time [yr]',
+    xaxis_settings = {
+        'MJD': {'column': 'Time (MJD)', 'xlabel': 'Time [MJD]',    'file_label': 'MJD'},
+        'JD' : {'column': 'Time (JD)',  'xlabel': 'Time [JD]',     'file_label': 'JD'},
+        'sec': {'column': 'Time (sec)', 'xlabel': 'Time [s]',      'file_label': 'sec'},
+        'day': {'column': 'Time (day)', 'xlabel': 'Time [days]',   'file_label': 'day'},
+        'mon': {'column': 'Time (mon)', 'xlabel': 'Time [months]', 'file_label': 'mon'},
+        'yr' : {'column': 'Time (yr)',  'xlabel': 'Time [yr]',     'file_label': 'yr'},
     }
-    return {
-        'column'    : xunit,
-        'xlabel'    : xaxis_labels[xunit],
-        'file_label': xunit,
-    }
+    return xaxis_settings[xunit]
     
-def get_yaxis_units(yunit):
-    yaxis_labels = {
-        'mag': 'Brightness [mag (AB)]',
-        'Jy' : 'Brightness [Jy]',
-        'uJy': r'Brightness [$\mu$Jy]',
-        'nJy': 'Brightness [nJy]',
+#def get_yaxis_units(yunit):
+#    yaxis_settings = {
+#        'mag': {'column': 'Brightness (AB-Magnitude)', 'ylabel': 'Brightness [mag AB]',   'file_label': 'mag', 'invert': True},
+#        'Jy' : {'column': 'Flux Density',              'ylabel': 'Brightness [Jy]',       'file_label': 'Jy',  'invert': False},
+#        'uJy': {'column': 'Flux Density',              'ylabel': r'Brightness [$\mu$Jy]', 'file_label': 'uJy', 'invert': False},
+#        'nJy': {'column': 'Flux Density',              'ylabel': 'Brightness [nJy]',      'file_label': 'nJy', 'invert': False},
+#    }
+#    return yaxis_settings[yunit]
+
+def get_yaxis_units(yunit, fluxunit):
+    yaxis_settings = {
+        'mag' : {'column': 'Brightness (AB-Magnitude)', 'ylabel': 'Brightness [mag AB]',      'file_label': 'mag',  'invert': True},
+        'flux': {'column': 'Flux Density',              'ylabel': f'Brightness [{fluxunit}]', 'file_label': 'flux', 'invert': False}, 
     }
-    return {
-        'column'    : yunit,
-        'xlabel'    : yaxis_labels[yunit],
-        'file_label': yunit,
-    }
+    return yaxis_settings[yunit]
 
 def apply_axis_scale(ax, scale):
     scale_map = {
