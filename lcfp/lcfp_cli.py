@@ -9,7 +9,9 @@ import argparse
 # ========================================================================================
 
 def parse_args():
-    parser = argparse.ArgumentParser()    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input_file',
+                        help="Path to the input file")
     parser.add_argument('-type',
                         dest='output_type',  
                         type=str,
