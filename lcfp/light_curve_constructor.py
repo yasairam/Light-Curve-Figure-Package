@@ -53,7 +53,7 @@ def conversion(data, flux_units):
 
     return light_curve_dataset    
     
-def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x, log_sel_y, file_type_sel):
+def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x, log_sel_y, file_type_sel, itv):
     """Create a light curve from astronomical input.
 
     Based on the input from the user in the CLI, this function will generate a publishable light curve.
@@ -80,6 +80,8 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
         
         file_type_sel (str): Python string. User selected value being either: png, pdf, or jpeg no as the output
             for the light curve to be saved.
+        
+        itv (str): Python string. User selected value being either: no or yes for if they wish to have an interactive view or not.
 
     Returns:
         None: light curve figure saved to computer as either a png, pdf, or jpeg.
@@ -164,8 +166,10 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
     os.makedirs("output", exist_ok=True)
     
     plt.savefig(
-        f"output/light_curve.{file_type_sel}",
+        f"output/light_curve_time={time_sel}_brightness={brightness_sel}.{file_type_sel}",
         dpi=300,
         bbox_inches="tight"
     )
-    plt.show()
+
+    if itv == "yes":
+        plt.show()
