@@ -154,6 +154,7 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
     for spine in ax.spines.values():
         spine.set_linewidth(2)
 
+    plt.rcParams["font.family"] = "serif"
     plt.tight_layout()
     plt.savefig(
         f"output/light_curve.{file_type_sel}",
