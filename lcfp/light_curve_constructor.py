@@ -163,6 +163,7 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, scale_sel,
     
     ax.tick_params(axis='both',
                    which='minor',
+                   labelsize=24,
                    width=1,
                    length=4,
                    direction='in',
