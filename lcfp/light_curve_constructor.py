@@ -3,6 +3,7 @@ from astropy.time import Time
 import astropy.units as u
 import matplotlib.pyplot as plt
 import os
+from lcfp_cli import apply_axis_scale, get_limits
 
 def conversion(data, flux_units):
     """Convert the two-column table input data into a five-column table. 
@@ -53,7 +54,7 @@ def conversion(data, flux_units):
 
     return light_curve_dataset    
     
-def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x, log_sel_y, file_type_sel, itv):
+def light_curve_generator(data, flux_units, time_sel, brightness_sel, scale_sel, output_sel, xmin=None, xmax=None, ymin=None, ymax=None, show_date=False):
     """Create a light curve from astronomical input.
 
     Based on the input from the user in the CLI, this function will generate a publishable light curve.
@@ -91,11 +92,16 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
     light_curve_data = conversion(data, flux_units)
 
     # Get each of the column data:
-    time_yyyy_mm_dd = light_curve_data["Time (YYYY-MM-DD)"]
-    brightness_flux_density = light_curve_data["Flux Density"]
-    time_MJD = light_curve_data["Time (MJD)"]
-    time_JD = light_curve_data["Time (JD)"]
-    brightness_ab_magnitude = light_curve_data["Brightness (AB-Magnitude)"]
+    #time_yyyy_mm_dd = light_curve_data["Time (YYYY-MM-DD)"]
+    #brightness_flux_density = light_curve_data["Flux Density"]
+    #time_MJD = light_curve_data["Time (MJD)"]
+    #time_JD = light_curve_data["Time (JD)"]
+    #brightness_ab_magnitude = light_curve_data["Brightness (AB-Magnitude)"]
+
+    x_column = time_sel["column"]
+    y_column = brightness_sel["column"]
+    x = light_curve_data[x_column]
+    y = light_curve_data[y_column]
 
     ## Plot light curve
     fig, ax = plt.subplots(figsize=(12,8))
@@ -103,37 +109,47 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
     # Select scheme for the light-curve based on user parameters
 
     # Time selection
-    if time_sel == "yyyy_mm_dd":
-        x = time_yyyy_mm_dd
-        ax.set_xlabel("Date [YYYY-MM-DD]", fontsize=16, weight='bold')
-        ax.tick_params(axis="x", labelrotation=75)
-    elif time_sel == "MJD":
-        x = time_MJD
-        ax.set_xlabel("MJD", fontsize=16, weight='bold')
-    elif time_sel == "JD":
-        x = time_JD
-        ax.set_xlabel("JD", fontsize=16, weight='bold')
+    #if time_sel == "yyyy_mm_dd":
+    #    x = time_yyyy_mm_dd
+    #    ax.set_xlabel("Date [YYYY-MM-DD]", fontsize=16, weight='bold')
+    #    ax.tick_params(axis="x", labelrotation=75)
+    #elif time_sel == "MJD":
+    #    x = time_MJD
+    #    ax.set_xlabel("MJD", fontsize=16, weight='bold')
+    #elif time_sel == "JD":
+    #    x = time_JD
+    #    ax.set_xlabel("JD", fontsize=16, weight='bold')
 
     # Set log_scale for x-axis:
-    if log_sel_x == "yes" and (time_sel == "MJD" or time_sel == "JD"):
-        ax.set_xscale("log")
-    
+    #if log_sel_x == "yes" and (time_sel == "MJD" or time_sel == "JD"):
+    #    ax.set_xscale("log")
+    #
     # Brightness selection
-    if brightness_sel == "flux":
-        if log_sel_y == "yes":
-            y = brightness_flux_density
-            ax.set_yscale("log")
-            ax.set_ylabel(f"Brightness [{flux_units}]", fontsize=16, weight='bold')
-        else:
-            y = brightness_flux_density
-            ax.set_ylabel(f"Brightness [{flux_units}]", fontsize=16, weight='bold')
-    elif brightness_sel == "ab_mag":
-        y = brightness_ab_magnitude
-        ax.set_ylabel("Brightness [AB Magnitude]", fontsize=16, weight='bold')
-        ax.invert_yaxis() # Only invert y-axis if AB magnitude is chosen
+    #if brightness_sel == "flux":
+    #    if log_sel_y == "yes":
+    #        y = brightness_flux_density
+    #        ax.set_yscale("log")
+    #        ax.set_ylabel(f"Brightness [{flux_units}]", fontsize=16, weight='bold')
+    #    else:
+    #        y = brightness_flux_density
+    #        ax.set_ylabel(f"Brightness [{flux_units}]", fontsize=16, weight='bold')
+    #elif brightness_sel == "ab_mag":
+    #    y = brightness_ab_magnitude
+    #    ax.set_ylabel("Brightness [AB Magnitude]", fontsize=16, weight='bold')
+    #    ax.invert_yaxis() # Only invert y-axis if AB magnitude is chosen
     
     # Plot light curve:
-    ax.scatter(x, y, color='black', s=20)
+    ax.scatter(x, y, color='black', s=output_sel['mrksize'])
+    
+    ax.set_xlabel(time_sel['xlabel'], fontsize=output_sel['txtsize'], weight='bold')
+    ax.set_ylabel(brightness_sel['ylabel'], fontsize=output_sel['txtsize'], weight='bold')
+    apply_axis_scale(ax, scale_sel)
+    if brightness_sel['invert']:
+        ax.invert_yaxis()
+    xmin, xmax = get_limits(x.min(), x.max(), xmin, xmax)
+    ymin, ymax = get_limits(y.min(), y.max(), ymin, ymax)
+    ax.set_xlim(xmin, xmax)
+    ax.set_ylim(ymin, ymax)
 
     # Making light curve look nice
     ax.tick_params(axis='both',
@@ -163,13 +179,16 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, log_sel_x,
     plt.tight_layout()
     
     # Create output directory if it doesn't exist
-    os.makedirs("output", exist_ok=True)
+    filetype = output_sel['filetype']
+    if filetype is not None:
+        os.makedirs("output", exist_ok=True)    
+        plt.savefig(
+            f"output/light_curve_time={time_sel['file_label']}_brightness={brightness_sel['file_label']}.{filetype}",
+            dpi=300,
+            bbox_inches="tight"
+        )
     
-    plt.savefig(
-        f"output/light_curve_time={time_sel}_brightness={brightness_sel}.{file_type_sel}",
-        dpi=300,
-        bbox_inches="tight"
-    )
-
-    if itv == "yes":
+    if output_sel['interactive']:
         plt.show()
+        
+    return fig, ax
