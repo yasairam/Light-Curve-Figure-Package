@@ -154,7 +154,7 @@ def light_curve_generator(data, flux_units, time_sel, brightness_sel, scale_sel,
     # Making light curve look nice
     ax.tick_params(axis='both',
                    which='major',
-                   labelsize=12,
+                   labelsize=24,
                    width=2,
                    length=8,
                    direction='in',
