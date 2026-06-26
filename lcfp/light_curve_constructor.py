@@ -37,10 +37,22 @@ def conversion(data, flux_units):
     brightness_original = light_curve_dataset["Flux Density"]
 
     # Using the first column — which should be formatted as a string 'YYYY-MM-DD', create third column as MJD
-    light_curve_dataset["Time (MJD)"] = Time(time_original.tolist()).mjd
+    #light_curve_dataset["Time (MJD)"] = Time(time_original.tolist()).mjd
 
     # Using the first column — which should be formatted as a string 'YYYY-MM-DD', create fourth column as JD
-    light_curve_dataset["Time (JD)"] = Time(time_original.tolist()).jd
+    #light_curve_dataset["Time (JD)"] = Time(time_original.tolist()).jd
+    
+    time_astropy = Time(time_original.tolist())
+
+    light_curve_dataset["Time (MJD)"] = time_astropy.mjd
+    light_curve_dataset["Time (JD)"] = time_astropy.jd
+
+    time_day = light_curve_dataset["Time (MJD)"] - light_curve_dataset["Time (MJD)"].min()
+
+    light_curve_dataset["Time (day)"] = time_day
+    light_curve_dataset["Time (sec)"] = time_day * 86400.0
+    light_curve_dataset["Time (mon)"] = time_day / 30.44
+    light_curve_dataset["Time (yr)"] = time_day / 365.25
 
     # Using second column - which can be Flux in uJy/nJy/Jy, convert to AB magnitudes
     if flux_units == "nJy":
